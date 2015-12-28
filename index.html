@@ -1,7 +1,7 @@
 ﻿<!doctype html>
 <html>
 <head>
-	<meta charset="UTF-8"/>
+    <meta charset="UTF-8"/>
     <style>
 
         .cell {
@@ -31,6 +31,21 @@
         #feedback {
 
         }
+
+        .history {
+            float: right;
+            border: 1px solid black;
+            width: 300px;
+            height: 400px;
+            padding: 10px;
+            margin: 10px;
+            overflow: scroll;
+        }
+
+        #invalidAnswers {
+            border: 1px solid orange;
+        }
+
     </style>
     <script>
         var a = []
@@ -72,6 +87,8 @@
 
             document.getElementById("x").innerHTML = x
             document.getElementById("y").innerHTML = y
+
+            document.getElementById("answer").focus();
         }
 
         function submitAnswer() {
@@ -81,15 +98,23 @@
 
             if (x * y == answer) {
                 a[x-1][y-1].valid += 1;
-                document.getElementById("feedback").innerHTML = "Dobrze! ";
+                document.getElementById("feedback").innerHTML = "Dobrze! " + x + " &times; " + y + " = "+ (x*y) + ".";
                 document.getElementById("answer").value = "";
                 validAnswers += 1;
                 allAnswers += 1;
+
+                answers = document.getElementById("validAnswers");
+                answers.innerHTML += x + " &times; " + y + " = "+ (x*y) + "<br/>";;
+                answers.scrollTop = answers.scrollHeight;
             } else {
                 a[x-1][y-1].invalid += 1;
-                document.getElementById("feedback").innerHTML = "Niestety, źle. Powinno być: "+(x*y)+". ";
+                document.getElementById("feedback").innerHTML = "Niestety, źle. Powinno być: " + x + " &times; " + y + " = "+ (x*y) + ", a nie " + answer + ".";
                 document.getElementById("answer").value = "";
                 allAnswers += 1;
+
+                answers = document.getElementById("invalidAnswers");
+                answers.innerHTML += x + " &times; " + y + " = "+ (x*y) + "<br/>";;
+                answers.scrollTop = answers.scrollHeight;
             }
             renderTable();
             askQuestion();
@@ -97,10 +122,13 @@
     </script>
 </head>
 <body onload="run();">
+    <div id="invalidAnswers" class="history">Złe odpowiedzi:<br/></div>
+    <div id="validAnswers" class="history">Dobre odpowiedzi:<br/></div>
     <div id="tabliczka"></div>
     <div id="summary"></div>
     <div id="question">
-        <p><span id="feedback"></span>Ile to jest <span class="addend" id="x"></span>x<span class="addend" id="y"></span>?</p>
+        <p><span id="feedback"></span></p>
+        <p>Ile to jest <span class="addend" id="x"></span> &times; <span class="addend" id="y"></span>?</p>
         <input id="answer" type="text" onkeydown="if (event.keyCode==13) {submitAnswer();}"></input>
         <a href="#" onclick="submitAnswer();">OK</a>
     </div>
