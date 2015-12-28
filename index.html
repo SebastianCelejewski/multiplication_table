@@ -3,7 +3,6 @@
 <head>
 	<meta charset="UTF-8"/>
     <style>
-
         .cell {
             display: inline-block;
             border: 1px solid black;
@@ -33,13 +32,13 @@
         }
     </style>
     <script>
-        var a = []
+        var data = []
         var validAnswers = 0;
         var allAnswers = 0;
         for (var i = 0; i < 10; i++) {
-            a[i] = []
+            data[i] = []
             for (var j = 0; j < 10; j++) {
-                a[i][j] = { valid: 0, invalid: 0};
+                data[i][j] = { valid: 0, invalid: 0};
             }
         }
 
@@ -93,8 +92,8 @@
             for (var y = 0; y < 10; y++) {
                 table += "<p><div class='cell heading'>" + (y+1) +"</div>"
                 for (var x = 0; x < 10; x++) {
-                    var valid_answers = a[x][y].valid
-                    var all_answers = a[x][y].valid + a[x][y].invalid
+                    var valid_answers = data[x][y].valid
+                    var all_answers = data[x][y].valid + data[x][y].invalid
                     var backgroundColor = "#ffffff";
                     var foregroundColor = "#ffffff";
 
@@ -105,11 +104,11 @@
                     }
 
                     var style="background-color: "+backgroundColor + "; color: " + foregroundColor;
-                    table += "<div class='cell' style='"+style+"'>"+a[x][y].valid + "/" + a[x][y].invalid + "</div>"       
+                    table += "<div class='cell' style='"+style+"'>"+data[x][y].valid + "/" + data[x][y].invalid + "</div>"       
                 }
                 table += "<p>"
             }
-            document.getElementById("tabliczka").innerHTML = table
+            document.getElementById("table").innerHTML = table
 
             document.getElementById("summary").innerHTML = "Liczba zadanych pytań: " + allAnswers + ". Liczba prawidłowych odpowiedzi: " + validAnswers + ".";        
         }
@@ -128,13 +127,13 @@
             var y = parseInt(document.getElementById("y").innerHTML);
 
             if (x * y == answer) {
-                a[x-1][y-1].valid += 1;
+                data[x-1][y-1].valid += 1;
                 document.getElementById("feedback").innerHTML = "Dobrze! ";
                 document.getElementById("answer").value = "";
                 validAnswers += 1;
                 allAnswers += 1;
             } else {
-                a[x-1][y-1].invalid += 1;
+                data[x-1][y-1].invalid += 1;
                 document.getElementById("feedback").innerHTML = "Niestety, źle. Powinno być: "+(x*y)+". ";
                 document.getElementById("answer").value = "";
                 allAnswers += 1;
@@ -145,7 +144,7 @@
     </script>
 </head>
 <body onload="run();">
-    <div id="tabliczka"></div>
+    <div id="table"></div>
     <div id="summary"></div>
     <div id="question">
         <p><span id="feedback"></span>Ile to jest <span class="addend" id="x"></span>x<span class="addend" id="y"></span>?</p>
