@@ -48,6 +48,42 @@
             askQuestion();
         }
 
+        function toHex(number) {
+            var result = number.toString(16);
+            if (result.length < 2) {
+                result = "0" + result;
+            }
+            return result;
+        }
+
+        function makeBackgroundColor(value) {
+            value = Math.min(Math.max(0,value), 1) * 510;
+
+            var redValue;
+            var greenValue;
+            if (value < 255) {
+                redValue = 255;
+                greenValue = Math.sqrt(value) * 16;
+                greenValue = Math.round(greenValue);
+            } else {
+                greenValue = 255;
+                value = value - 255;
+                redValue = 255 - (value * value / 255)
+                redValue = Math.round(redValue);
+            }
+
+            return "#" + toHex(redValue) + toHex(greenValue) + "00";
+        }
+
+        function makeForegroundColor(value) {
+            if (value > 10) {
+                return "#000000";
+            }
+
+            var relative = 255- parseInt(255*parseFloat(value / 10));
+            return "#"+toHex(relative)+toHex(relative)+toHex(relative);
+        }
+
         function renderTable() {
             var table = "<p>";
             for (var idx = 0; idx < 11; idx++) {
@@ -57,7 +93,19 @@
             for (var y = 0; y < 10; y++) {
                 table += "<p><div class='cell heading'>" + (y+1) +"</div>"
                 for (var x = 0; x < 10; x++) {
-                    table += "<div class='cell'>"+a[x][y].valid + "/" + a[x][y].invalid + "</div>"       
+                    var valid_answers = a[x][y].valid
+                    var all_answers = a[x][y].valid + a[x][y].invalid
+                    var backgroundColor = "#ffffff";
+                    var foregroundColor = "#ffffff";
+
+                    if (all_answers > 0) {
+                        var ratio = parseFloat(valid_answers) / parseFloat(all_answers);
+                        backgroundColor = makeBackgroundColor(ratio);
+                        foregroundColor = makeForegroundColor(all_answers);
+                    }
+
+                    var style="background-color: "+backgroundColor + "; color: " + foregroundColor;
+                    table += "<div class='cell' style='"+style+"'>"+a[x][y].valid + "/" + a[x][y].invalid + "</div>"       
                 }
                 table += "<p>"
             }
@@ -104,5 +152,6 @@
         <input id="answer" type="text" onkeydown="if (event.keyCode==13) {submitAnswer();}"></input>
         <a href="#" onclick="submitAnswer();">OK</a>
     </div>
+    <div id="debug"></div>
 </body>
 </html>
