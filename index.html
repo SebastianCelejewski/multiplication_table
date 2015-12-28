@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8"/>
     <style>
-
         .cell {
             display: inline-block;
             border: 1px solid black;
@@ -48,19 +47,55 @@
 
     </style>
     <script>
-        var a = []
+        var data = []
         var validAnswers = 0;
         var allAnswers = 0;
         for (var i = 0; i < 10; i++) {
-            a[i] = []
+            data[i] = []
             for (var j = 0; j < 10; j++) {
-                a[i][j] = { valid: 0, invalid: 0};
+                data[i][j] = { valid: 0, invalid: 0};
             }
         }
 
         function run() {
             renderTable();
             askQuestion();
+        }
+
+        function toHex(number) {
+            var result = number.toString(16);
+            if (result.length < 2) {
+                result = "0" + result;
+            }
+            return result;
+        }
+
+        function makeBackgroundColor(value) {
+            value = Math.min(Math.max(0,value), 1) * 510;
+
+            var redValue;
+            var greenValue;
+            if (value < 255) {
+                redValue = 255;
+                greenValue = Math.sqrt(value) * 16;
+                greenValue = Math.round(greenValue);
+            } else {
+                greenValue = 255;
+                value = value - 255;
+                redValue = 255 - (value * value / 255)
+                redValue = Math.round(redValue);
+            }
+
+            return "#" + toHex(redValue) + toHex(greenValue) + "00";
+        }
+
+        function makeForegroundColor(value) {
+            if (value > 10) {
+                return "#000000";
+            }
+
+            var relative = 255- parseInt(255*parseFloat(value / 10));
+            return "#"+toHex(relative)+toHex(relative)+toHex(relative);
         }
 
         function renderTable() {
@@ -72,11 +107,23 @@
             for (var y = 0; y < 10; y++) {
                 table += "<p><div class='cell heading'>" + (y+1) +"</div>"
                 for (var x = 0; x < 10; x++) {
-                    table += "<div class='cell'>"+a[x][y].valid + "/" + a[x][y].invalid + "</div>"       
+                    var valid_answers = data[x][y].valid
+                    var all_answers = data[x][y].valid + data[x][y].invalid
+                    var backgroundColor = "#ffffff";
+                    var foregroundColor = "#ffffff";
+
+                    if (all_answers > 0) {
+                        var ratio = parseFloat(valid_answers) / parseFloat(all_answers);
+                        backgroundColor = makeBackgroundColor(ratio);
+                        foregroundColor = makeForegroundColor(all_answers);
+                    }
+
+                    var style="background-color: "+backgroundColor + "; color: " + foregroundColor;
+                    table += "<div class='cell' style='"+style+"'>"+data[x][y].valid + "/" + data[x][y].invalid + "</div>"       
                 }
                 table += "<p>"
             }
-            document.getElementById("tabliczka").innerHTML = table
+            document.getElementById("table").innerHTML = table
 
             document.getElementById("summary").innerHTML = "Liczba zadanych pytań: " + allAnswers + ". Liczba prawidłowych odpowiedzi: " + validAnswers + ".";        
         }
@@ -97,7 +144,7 @@
             var y = parseInt(document.getElementById("y").innerHTML);
 
             if (x * y == answer) {
-                a[x-1][y-1].valid += 1;
+                data[x-1][y-1].valid += 1;
                 document.getElementById("feedback").innerHTML = "Dobrze! " + x + " &times; " + y + " = "+ (x*y) + ".";
                 document.getElementById("answer").value = "";
                 validAnswers += 1;
@@ -107,7 +154,7 @@
                 answers.innerHTML += x + " &times; " + y + " = "+ (x*y) + "<br/>";;
                 answers.scrollTop = answers.scrollHeight;
             } else {
-                a[x-1][y-1].invalid += 1;
+                data[x-1][y-1].invalid += 1;
                 document.getElementById("feedback").innerHTML = "Niestety, źle. Powinno być: " + x + " &times; " + y + " = "+ (x*y) + ", a nie " + answer + ".";
                 document.getElementById("answer").value = "";
                 allAnswers += 1;
@@ -124,7 +171,7 @@
 <body onload="run();">
     <div id="invalidAnswers" class="history">Złe odpowiedzi:<br/></div>
     <div id="validAnswers" class="history">Dobre odpowiedzi:<br/></div>
-    <div id="tabliczka"></div>
+    <div id="table"></div>
     <div id="summary"></div>
     <div id="question">
         <p><span id="feedback"></span></p>
@@ -132,5 +179,6 @@
         <input id="answer" type="text" onkeydown="if (event.keyCode==13) {submitAnswer();}"></input>
         <a href="#" onclick="submitAnswer();">OK</a>
     </div>
+    <div id="debug"></div>
 </body>
 </html>
