@@ -1,0 +1,108 @@
+﻿<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+    <style>
+
+        .cell {
+            display: inline-block;
+            border: 1px solid black;
+            padding: 5px;
+            margin-right: 5px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .heading {
+            background-color: #808080;
+        }
+
+        .addend {
+            color: red;
+        }
+
+        #question {
+            width: 500px;
+            margin: 5px;
+            padding: 1px;
+            background-color: #e0e0e0;
+        }
+
+        #feedback {
+
+        }
+    </style>
+    <script>
+        var a = []
+        var validAnswers = 0;
+        var allAnswers = 0;
+        for (var i = 0; i < 10; i++) {
+            a[i] = []
+            for (var j = 0; j < 10; j++) {
+                a[i][j] = { valid: 0, invalid: 0};
+            }
+        }
+
+        function run() {
+            renderTable();
+            askQuestion();
+        }
+
+        function renderTable() {
+            var table = "<p>";
+            for (var idx = 0; idx < 11; idx++) {
+                table += "<div class='cell heading'>" + idx +"</div>"
+            }
+            table += "</p>"
+            for (var y = 0; y < 10; y++) {
+                table += "<p><div class='cell heading'>" + (y+1) +"</div>"
+                for (var x = 0; x < 10; x++) {
+                    table += "<div class='cell'>"+a[x][y].valid + "/" + a[x][y].invalid + "</div>"       
+                }
+                table += "<p>"
+            }
+            document.getElementById("tabliczka").innerHTML = table
+
+            document.getElementById("summary").innerHTML = "Liczba zadanych pytań: " + allAnswers + ". Liczba prawidłowych odpowiedzi: " + validAnswers + ".";        
+        }
+
+        function askQuestion() {
+            var x = Math.floor(Math.random() * 10 + 1)
+            var y = Math.floor(Math.random() * 10 + 1)
+
+            document.getElementById("x").innerHTML = x
+            document.getElementById("y").innerHTML = y
+        }
+
+        function submitAnswer() {
+            var answer = parseInt(document.getElementById("answer").value);
+            var x = parseInt(document.getElementById("x").innerHTML);
+            var y = parseInt(document.getElementById("y").innerHTML);
+
+            if (x * y == answer) {
+                a[x-1][y-1].valid += 1;
+                document.getElementById("feedback").innerHTML = "Dobrze! ";
+                document.getElementById("answer").value = "";
+                validAnswers += 1;
+                allAnswers += 1;
+            } else {
+                a[x-1][y-1].invalid += 1;
+                document.getElementById("feedback").innerHTML = "Niestety, źle. Powinno być: "+(x*y)+". ";
+                document.getElementById("answer").value = "";
+                allAnswers += 1;
+            }
+            renderTable();
+            askQuestion();
+        }
+    </script>
+</head>
+<body onload="run();">
+    <div id="tabliczka"></div>
+    <div id="summary"></div>
+    <div id="question">
+        <p><span id="feedback"></span>Ile to jest <span class="addend" id="x"></span>x<span class="addend" id="y"></span>?</p>
+        <input id="answer" type="text" onkeydown="if (event.keyCode==13) {submitAnswer();}"></input>
+        <a href="#" onclick="submitAnswer();">OK</a>
+    </div>
+</body>
+</html>
