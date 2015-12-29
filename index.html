@@ -41,10 +41,6 @@
             overflow: scroll;
         }
 
-        #invalidAnswers {
-            border: 1px solid orange;
-        }
-
     </style>
     <script>
         var data = []
@@ -174,7 +170,7 @@
                 allAnswers += 1;
 
                 answers = document.getElementById("validAnswers");
-                answers.innerHTML += x + " &times; " + y + " = "+ (x*y) + "<br/>";;
+                answers.innerHTML += x + " &times; " + y + " = " + (x * y) + "<br/>";;
                 answers.scrollTop = answers.scrollHeight;
             } else {
                 data[x-1][y-1].invalid += 1;
@@ -183,7 +179,11 @@
                 allAnswers += 1;
 
                 answers = document.getElementById("invalidAnswers");
-                answers.innerHTML += x + " &times; " + y + " = "+ answer + "<br/>";;
+                answers.innerHTML += x + " &times; " + y + " = " + answer + "<br/>";;
+                answers.scrollTop = answers.scrollHeight;
+
+                answers = document.getElementById("correctAnswers");
+                answers.innerHTML += x + " &times; " + y + " = " + (x * y) + "<br/>";;
                 answers.scrollTop = answers.scrollHeight;
             }
             renderTable();
@@ -208,8 +208,18 @@
     </script>
 </head>
 <body onload="run();">
-    <div id="invalidAnswers" class="history">Złe odpowiedzi:<br/></div>
-    <div id="validAnswers" class="history">Dobre odpowiedzi:<br/></div>
+    <fieldset class="history">
+        <legend>Powinno być</legend>
+        <div id="correctAnswers"></div>
+    </fieldset>
+    <fieldset class="history">
+        <legend>Odpowiedzi niepoprawne</legend>
+        <div id="invalidAnswers"></div>
+    </fieldset>
+    <fieldset class="history">
+        <legend>Odpowiedzi poprawne</legend>
+        <div id="validAnswers"></div>
+    </fieldset>
     <div id="table"></div>
     <div id="settings">
         <p>Poziom trudności:
