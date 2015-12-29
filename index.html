@@ -50,6 +50,8 @@
         var data = []
         var validAnswers = 0;
         var allAnswers = 0;
+        var difficulty = 1;
+
         for (var i = 0; i < 10; i++) {
             data[i] = []
             for (var j = 0; j < 10; j++) {
@@ -59,6 +61,7 @@
 
         function run() {
             renderTable();
+            updateRadioButtons();
             askQuestion();
         }
 
@@ -128,9 +131,29 @@
             document.getElementById("summary").innerHTML = "Liczba zadanych pytań: " + allAnswers + ". Liczba prawidłowych odpowiedzi: " + validAnswers + ".";        
         }
 
+        var numberPerLevel = [ 
+            [1, 10], 
+            [1, 2, 10], 
+            [1, 2, 3, 5, 10], 
+            [1, 2, 3, 4, 5, 10], 
+            [1, 2, 3, 4, 5, 8, 9, 10],
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            ];
+
+        function pickANumber() {
+            return number;
+        }
+
         function askQuestion() {
-            var x = Math.floor(Math.random() * 10 + 1)
-            var y = Math.floor(Math.random() * 10 + 1)
+            var availableNumbers = numberPerLevel[difficulty-1];
+            var x = availableNumbers[Math.floor(Math.random() * (availableNumbers.length))];
+            var y = Math.floor(Math.random() * 10 + 1);
+
+            if (Math.random() > 0.5) {
+                var z = x;
+                x = y;
+                y = z;
+            }
 
             document.getElementById("x").innerHTML = x
             document.getElementById("y").innerHTML = y
@@ -166,12 +189,38 @@
             renderTable();
             askQuestion();
         }
+
+        function setLevel(level) {
+            difficulty = level;
+            updateRadioButtons();
+        }
+
+        function updateRadioButtons() {
+            for (var i = 1; i <= 6; i++) {
+                var radioButton = document.getElementById("level" + i);
+                if (i == difficulty) {
+                    radioButton.checked = true;
+                } else {
+                    radioButton.checked = false;
+                }
+            }
+        }
     </script>
 </head>
 <body onload="run();">
     <div id="invalidAnswers" class="history">Złe odpowiedzi:<br/></div>
     <div id="validAnswers" class="history">Dobre odpowiedzi:<br/></div>
     <div id="table"></div>
+    <div id="settings">
+        <p>Poziom trudności:
+        <input id="level1" type="radio" value="1" onclick="setLevel(1);">Bardzo łatwy</input>
+        <input id="level2" type="radio" value="2" onclick="setLevel(2);">Łatwy</input>
+        <input id="level3" type="radio" value="3" onclick="setLevel(3);">Średni</input>
+        <input id="level4" type="radio" value="4" onclick="setLevel(4);">Trudny</input>
+        <input id="level5" type="radio" value="5" onclick="setLevel(5);">Bardzo trudny</input>
+        <input id="level6" type="radio" value="6" onclick="setLevel(6);">Cała tabliczka mnożenia</input>
+        </p>
+    </div>
     <div id="summary"></div>
     <div id="question">
         <p><span id="feedback"></span></p>
