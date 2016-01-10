@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <style>
+
         .cell {
             display: inline-block;
             border: 1px solid black;
@@ -36,7 +37,7 @@
         .history {
             float: right;
             border: 1px solid black;
-            width: 300px;
+            width: 200px;
             height: 400px;
             padding: 10px;
             margin: 10px;
@@ -207,7 +208,7 @@
         <legend>Odpowiedzi poprawne</legend>
         <div id="validAnswers"></div>
     </fieldset>
-    <div id="table"></div>
+    <div class="main-table" id="table"></div>
     <div id="settings">
         <p>Poziom trudności:
         <input id="level1" type="radio" value="1" onclick="setLevel(1);">Bardzo łatwy</input>
