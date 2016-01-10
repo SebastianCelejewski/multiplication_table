@@ -11,6 +11,7 @@
             width: 30px;
             height: 30px;
             text-align: center;
+            vertical-align: bottom;
         }
 
         .heading {
@@ -83,8 +84,14 @@
                     if (data[x][y].length > 2) {
                         fontSize = "14px";
                     }
-                    if (data[x][y].length > 5) {
+                    if (data[x][y].length > 4) {
+                        fontSize = "12px;"
+                    }
+                    if (data[x][y].length > 6) {
                         fontSize = "10px;"
+                    }
+                    if (data[x][y].length > 9) {
+                        fontSize = "9px;"
                     }
                     table += "<div class='cell' style='font-size: "+fontSize+";'>"
                     if (data[x][y].length == 0) {
