@@ -124,23 +124,58 @@
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
             ];
 
-        function pickANumber() {
-            return number;
+        function findLowestNumberOfOccurrences() {
+            var availableNumbers = numberPerLevel[difficulty-1];
+
+            var minimumNumberOfOccurrences = undefined;
+            var maximumNumberOfOccurrences = undefined;
+
+            for (var idx = 0; idx < availableNumbers.length; idx++) {
+                var x = availableNumbers[idx]-1;
+                for (var y = 0; y < 10; y++) {
+                    var number_of_occurrences = data[x][y].length;
+                    if (minimumNumberOfOccurrences == undefined || minimumNumberOfOccurrences > number_of_occurrences) {
+                        minimumNumberOfOccurrences = number_of_occurrences;
+                    }
+                    if (maximumNumberOfOccurrences == undefined || maximumNumberOfOccurrences < number_of_occurrences) {
+                        maximumNumberOfOccurrences = number_of_occurrences;
+                    }
+                    number_of_occurrences = data[y][x].length;
+                    if (minimumNumberOfOccurrences == undefined || minimumNumberOfOccurrences > number_of_occurrences) {
+                        minimumNumberOfOccurrences = number_of_occurrences;
+                    }
+                    if (maximumNumberOfOccurrences == undefined || maximumNumberOfOccurrences < number_of_occurrences) {
+                        maximumNumberOfOccurrences = number_of_occurrences;
+                    }
+                }
+            }
+
+            return minimumNumberOfOccurrences;
         }
 
-        function askQuestion() {
+        function pickNumbers() {
             var availableNumbers = numberPerLevel[difficulty-1];
+
             var x = availableNumbers[Math.floor(Math.random() * (availableNumbers.length))];
-            var y = Math.floor(Math.random() * 8 + 2);
+            var y = Math.floor(Math.random() * 10 + 1);
 
             if (Math.random() > 0.5) {
                 var z = x;
                 x = y;
                 y = z;
             }
+            return [x, y];
+        }
 
-            document.getElementById("x").innerHTML = x
-            document.getElementById("y").innerHTML = y
+        function askQuestion() {
+            do {
+                var numbers = pickNumbers();
+                var numberOfOccurrencesOfPickedNumbers = data[numbers[0]-1][numbers[1]-1].length;
+                var lowestNumberOfOccurrences = findLowestNumberOfOccurrences();
+            } while (numberOfOccurrencesOfPickedNumbers - lowestNumberOfOccurrences > 1);
+
+            document.getElementById("x").innerHTML = numbers[0]
+            document.getElementById("y").innerHTML = numbers[1]
 
             document.getElementById("answer").focus();
         }
